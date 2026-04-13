@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset ="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ciel</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: 'Pixelify Sans', system-ui;
+                background-image: url("assets/header.png");
+                background-repeat: no-repeat;
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                color:  #c28fe6 ;
+                overflow:hidden;
+            }
+            #startPage {
+                display: flex;
+                flex-direction:column;
+                align-items: center;
+                justify-content:center;
+                background-repeat: no-repeat;
+                background-position: center;
+                color: thistle;
+                animation:fadein 3s ease-out;
+                text-align : center;
+                margin-top: 80px;
+            }
+            .logo {
+                      width: 300px;
+                       height: 300px;
+                       animation:logoAnimation 2s ease-out forwards  ;   
+            }
+
+            .slogan{
+                font-size:2rem;
+                color:rgb(190, 206, 224);
+                margin-bottom: 40px;
+                opacity: 0;
+                animation: sloganAnimation 2s ease-out 1s forwards;
+            }
+            
+            @keyframes fadeI {
+                from{opacity:0;}
+                to{opacity:1;}
+            }
+
+            @keyframes logoAnimation {
+                from{transform: scale(0.5); opacity:0;}
+                to {transform:scale(1); opacity:1;}
+            }
+            @keyframes sloganAnimation {
+                from { opacity:0;}
+                to { opacity :1; }                
+            }
+
+            .hidden {
+                display : none;
+            }
+
+            .title-bar {
+                position: fixed;
+                top: 0;
+                left:0;
+                right: 0;
+                height:45px;
+                background: #ffe3e3;
+                border-bottom: 2px dashed #ffbde1;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 12px;
+                box-sizing: border-box;
+                z-index: 1000;
+                -webkit-app-region: drag;
+            }
+
+            .drag-region {
+                margin-left: 10px;
+                font-weight: bold;
+                font-size:20px;
+                color:  #789dbc;
+                flex-grow: 1;                
+            }
+
+            .window-controls{
+                margin-left:160px;
+                flex-grow: 1;
+                display:flex;
+                -webkit-app-region: drag;
+            }
+
+            .window-controls button {
+                background: transparent;
+                border:none;
+                padding: 4px;
+                -webkit-app-region: no drag;
+            }
+
+            .window-controls img {
+                width: 45px;
+                height: 45px;
+                filter: drop-shadow(1px 1px #ffc2d1);
+            }
+
+            .form-container {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                margin-top: 130px;
+                padding: 20px;
+                box-sizing: border-box;                               
+            }
+
+            .form-container h2 {
+                margin-bottom: 20px;
+                color: #94b7a7;
+                text-align: center;
+            }
+             .form-container form {
+                width: 100%;
+                max-width: 300px;
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 10px;
+             }
+
+             .form-container form input {
+                padding : 10px;
+                margin-bottom: 15px;
+                border: 3px dashed #e7cccc;
+                border-radius: 5px;
+                outline: none;
+                font-family: 'Pixelify Sans', system-ui;
+                color: thistle;
+             }
+
+             .form-container form button {
+                margin-top: -17px;
+                margin-bottom: -30px;
+                background-color: transparent;
+                outline: transparent;
+                border: transparent;
+                cursor: pointer;
+             }
+
+             .form-container form button img {
+                width: 100px;
+                height: 100px;
+                background-color: transparent;
+                outline: none;
+                border: none;
+                flex-grow: 1;
+             }
+
+             .form-container input::placeholder {
+                color: thistle;
+             }
+
+             .form-container input::placeholder-shown {
+                color: thistle;
+             }
+
+             .form-container .switch-form a {
+                color:  #a1c0eb;
+                text-decoration: none;
+             }
+              .form-container .switch-form a:hover {
+                text-decoration: underline;
+              }             
+
+              .app-container {
+                display: none;
+                padding-bottom: 100px;
+                margin-left: 25px;
+                margin-right: 25px;
+                min-height: 100vh;
+                flex-grow: 1;
+                flex-direction: column;
+                box-sizing: border-box;
+                align-items: center;
+              }
+
+              nav {
+                display: flex;
+                flex-grow: 1;
+                align-items: center;
+                margin-top: -83px;
+                margin-left: 5px;
+                margin-right: 20px;
+              }
+
+              nav button:nth-child(2) {
+                
+              }
+        </style>
+    </head>
+</html>
