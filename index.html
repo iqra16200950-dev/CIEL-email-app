@@ -1,207 +1,378 @@
 <!DOCTYPE html>
-<html lang = "en">
-    <head>
-        <meta charset ="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Ciel</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
-        <style>
-            body {
-                margin: 0;
-                padding: 0;
-                font-family: 'Pixelify Sans', system-ui;
-                background-image: url("assets/header.png");
-                background-repeat: no-repeat;
-                background-size: cover;
-                background-position: center;
-                background-attachment: fixed;
-                color:  #c28fe6 ;
-                overflow:hidden;
-            }
-            #startPage {
-                display: flex;
-                flex-direction:column;
-                align-items: center;
-                justify-content:center;
-                background-repeat: no-repeat;
-                background-position: center;
-                color: thistle;
-                animation:fadein 3s ease-out;
-                text-align : center;
-                margin-top: 80px;
-            }
-            .logo {
-                      width: 300px;
-                       height: 300px;
-                       animation:logoAnimation 2s ease-out forwards  ;   
-            }
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ciel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Pixelify Sans', system-ui;
+            background-image: url("header.png");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #4b0082;
+            overflow: hidden;
+        }
 
-            .slogan{
-                font-size:2rem;
-                color:rgb(190, 206, 224);
-                margin-bottom: 40px;
-                opacity: 0;
-                animation: sloganAnimation 2s ease-out 1s forwards;
-            }
-            
-            @keyframes fadeI {
-                from{opacity:0;}
-                to{opacity:1;}
-            }
+        #startPage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            color: thistle;
+            animation: fadeIn 3s ease-out;
+            text-align: center;
+            margin-top: 80px;
+        }
 
-            @keyframes logoAnimation {
-                from{transform: scale(0.5); opacity:0;}
-                to {transform:scale(1); opacity:1;}
-            }
-            @keyframes sloganAnimation {
-                from { opacity:0;}
-                to { opacity :1; }                
-            }
+        .logo {
+            width: 300px;
+            height: 300px;
+            animation: logoAnimation 2s ease-out forwards;
+        }
 
-            .hidden {
-                display : none;
-            }
+        .slogan {
+            font-size: 2rem;
+            color: rgb(190, 206, 224);
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: sloganAnimation 2s ease-out 1s forwards;
+        }
 
-            .title-bar {
-                position: fixed;
-                top: 0;
-                left:0;
-                right: 0;
-                height:45px;
-                background: #ffe3e3;
-                border-bottom: 2px dashed #ffbde1;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0 12px;
-                box-sizing: border-box;
-                z-index: 1000;
-                -webkit-app-region: drag;
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
-            .drag-region {
-                margin-left: 10px;
-                font-weight: bold;
-                font-size:20px;
-                color:  #789dbc;
-                flex-grow: 1;                
-            }
+        @keyframes logoAnimation {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
 
-            .window-controls{
-                margin-left:160px;
-                flex-grow: 1;
-                display:flex;
-                -webkit-app-region: drag;
-            }
+        @keyframes sloganAnimation {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
-            .window-controls button {
-                background: transparent;
-                border:none;
-                padding: 4px;
-                -webkit-app-region: no drag;
-            }
+        .hidden {
+            display: none;
+        }
 
-            .window-controls img {
-                width: 45px;
-                height: 45px;
-                filter: drop-shadow(1px 1px #ffc2d1);
-            }
+        .title-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 45px;
+            background: #ffe3e3;
+            border-bottom: 2px dashed #ffbde1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 12px;
+            box-sizing: border-box;
+            z-index: 1000;
+            -webkit-app-region: drag;
+        }
 
-            .form-container {
-                display: flex;
-                flex-direction: column;
-                flex-grow: 1;
-                align-items: center;
-                justify-content: center;
-                width: 100%;
-                margin-top: 130px;
-                padding: 20px;
-                box-sizing: border-box;                               
-            }
+        .drag-region {
+            margin-left: 10px;
+            font-weight: bold;
+            font-size: 20px;
+            color: #789dbc;
+            flex-grow: 1;
+        }
 
-            .form-container h2 {
-                margin-bottom: 20px;
-                color: #94b7a7;
-                text-align: center;
-            }
-             .form-container form {
-                width: 100%;
-                max-width: 300px;
-                display: flex;
-                flex-direction: column;
-                margin-bottom: 10px;
-             }
+        .window-controls {
+            margin-left: 160px;
+            flex-grow: 1;
+            display: flex;
+            -webkit-app-region: drag;
+        }
 
-             .form-container form input {
-                padding : 10px;
-                margin-bottom: 15px;
-                border: 3px dashed #e7cccc;
-                border-radius: 5px;
-                outline: none;
-                font-family: 'Pixelify Sans', system-ui;
-                color: thistle;
-             }
+        .window-controls button {
+            background: transparent;
+            border: none;
+            padding: 4px;
+            cursor: pointer;
+            -webkit-app-region: no-drag;
+        }
 
-             .form-container form button {
-                margin-top: -17px;
-                margin-bottom: -30px;
-                background-color: transparent;
-                outline: transparent;
-                border: transparent;
-                cursor: pointer;
-             }
+        .window-controls img {
+            width: 45px;
+            height: 45px;
+            filter: drop-shadow(1px 1px #ffc2d1);
+        }
 
-             .form-container form button img {
-                width: 100px;
-                height: 100px;
-                background-color: transparent;
-                outline: none;
-                border: none;
-                flex-grow: 1;
-             }
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: 130px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
 
-             .form-container input::placeholder {
-                color: thistle;
-             }
+        .form-container h2 {
+            margin-bottom: 20px;
+            color: #94b7a7;
+            text-align: center;
+        }
 
-             .form-container input::placeholder-shown {
-                color: thistle;
-             }
+        .form-container form {
+            width: 100%;
+            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
 
-             .form-container .switch-form a {
-                color:  #a1c0eb;
-                text-decoration: none;
-             }
-              .form-container .switch-form a:hover {
-                text-decoration: underline;
-              }             
+        .form-container form input {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 3px dashed #e7cccc;
+            border-radius: 5px;
+            outline: none;
+            font-family: 'Pixelify Sans', system-ui;
+            color: thistle;
+        }
 
-              .app-container {
-                display: none;
-                padding-bottom: 100px;
-                margin-left: 25px;
-                margin-right: 25px;
-                min-height: 100vh;
-                flex-grow: 1;
-                flex-direction: column;
-                box-sizing: border-box;
-                align-items: center;
-              }
+        .form-container form button {
+            margin-top: -17px;
+            margin-bottom: -30px;
+            background-color: transparent;
+            outline: transparent;
+            border: transparent;
+            cursor: pointer;
+        }
 
-              nav {
-                display: flex;
-                flex-grow: 1;
-                align-items: center;
-                margin-top: -83px;
-                margin-left: 5px;
-                margin-right: 20px;
-              }
+        .form-container form button img {
+            width: 100px;
+            height: 100px;
+            background-color: transparent;
+            outline: none;
+            border: none;
+            flex-grow: 1;
+        }
 
-              nav button:nth-child(2) {
-                
-              }
+        .form-container input::placeholder {
+            color: thistle;
+        }
+
+        .form-container input::placeholder-shown {
+            color: thistle;
+        }
+
+        .form-container .switch-form a {
+            color: #a1c0eb;
+            text-decoration: none;
+        }
+
+        .form-container .switch-form a:hover {
+            text-decoration: underline;
+        }
+
+        .app-container {
+            display: none;
+            padding-bottom: 100px;
+            margin-left: 25px;
+            margin-right: 25px;
+            min-height: 100vh;
+            flex-grow: 1;
+            flex-direction: column;
+            box-sizing: border-box;
+            align-items: center;
+        }
+
+        nav {
+            display: flex;
+            flex-grow: 1;
+            align-items: center;
+            margin-top: -83px;
+            margin-left: 5px;
+            margin-right: 20px;
+        }
+
+        nav button:nth-child(2) {
+            padding-left: 18px;
+            flex-grow: 1;
+        }
+
+        nav button {
+            margin-top: -83px;
+            margin-right: 10px;
+            margin-left: 32px;
+            flex-grow: 1;
+            background: transparent;
+            padding: 2px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-color: transparent;
+        }
+
+        #mail-area {
+            width: 300px;
+            height: 350px;
+            background: #fff8fc;
+            opacity: 0.8;
+            border: 5px dashed #ffbde1;
+            border-radius: 12px;
+            padding: 16px;
+            box-sizing: border-box;
+            margin: 20px;
+            margin-top: -50px;
+            margin-bottom: -60px; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        #mail-area input[type='text'] {
+            font-family: 'Pixelify Sans', system-ui;
+            color: thistle;
+            border: 3px dashed #e7cccc;
+            outline: none;
+        }
+
+        #mail-area input[type='text']::placeholder {
+            color: thistle;
+        }
+
+        #mail-area textarea {
+            font-family: 'Pixelify Sans', system-ui;
+            color: thistle;
+            border: 3px dashed #e7cccc;
+            outline: none;
+        }
+
+        #mail-area textarea::placeholder {
+            color: thistle;
+        }
+
+        #mail-area h2 {
+            color: #d1e9f6;
+        }
+
+        p {
+            text-align: center;
+            color: #eecad5;
+        }
+
+        :placeholder-shown {
+            font-family: 'Pixelify Sans', system-ui;
+            color: thistle;
+        }
+
+        .send-btn {
+            background: none;
+            border: none;
+            outline: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .send-icon {
+            width: 100px;
+            height: 100px;
+            filter: drop-shadow(1px 1px #ffcce0);
+            transition: transform 0.2s ease;
+        }
+        
+        footer button{
+            background: transparent;
+            border-color: transparent;
+            outline: transparent;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            padding-bottom: 30px;
+            cursor: pointer;
+        }
+
+        footer img {
+            width: 200px;
+            height: 200px;
+            flex-grow: 1;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
         </style>
     </head>
+    <body>
+        <div id="startPage">
+            <img src="assets/logo.png" alt="CIEL Logo" class="logo"/>
+            <div class="slogan">Tiny app , big messages</div>
+        </div>
+
+        <div id="mainContent" class="hidden">
+            <div class="title-bar">
+                <div class="drag-region">Ciel</div>
+                <div class="window-controls">
+                    <button class="min-btn" title="Minimize">
+                        <img src="assets/icon-min.png" alt="Minimize">
+                    </button>
+                    <button class="close-btn" title="Close">
+                        <img src="assets/icon-close.png" alt="Close">
+                    </button>
+                </div>
+            </div>
+                    <div class="form-container">
+            <div id="loginForm">
+                <h2>LOGIN</h2>
+                <form id="login-form">
+                    <input type="text" name="email" placeholder="username" required>
+                    <input type="password" name="password" placeholder="password" required>
+                    <button type="submit">
+                        <img src="assets/login.png" alt="login">
+                    </button>
+                </form>
+                <div class="switch-form">
+                    <a href="#" id="showSignup">don't have an account? sign up</a>
+                </div>
+              </div>
+             
+              <div id="signupForm" class="hidden">
+                <h2>SIGN UP</h2>
+                <form id="signup-form">
+                    <input type="text" name="name" placeholder="create your username" required>
+                    <input type="password" name="password" placeholder="create your password" required>
+                    <button type="submit">
+                        <img src="assets/signup.png" alt="signup">
+                    </button>
+                </form>
+                <div class="switch-form">
+                    <a href="#" id="showLogin">already have an account? Login </a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="app-container">
+                <nav>
+                    <button onclick="switchTab('inbox')">
+                        <img src="assets/inbox.png" alt="inbox" width="85" height="85">
+                    </button>
+                    <button
+                </nav>
+            </div>
+        </div>
+    </body>
 </html>
