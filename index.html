@@ -370,9 +370,112 @@
                     <button onclick="switchTab('inbox')">
                         <img src="assets/inbox.png" alt="inbox" width="85" height="85">
                     </button>
-                    <button
+                    <button onclick="switchTab('sent')">
+                        <img src="sent.png" alt="Sent" width="85" height="85">
+                    </button>
+                    <button onclick="switchTab('Trash')">
+                        <img src="assets/trash.png" alt="inbox" width="85" height="85">
+                    </button>
                 </nav>
+                <main id="mail-area">
+                    <p>select a folder to view messages</p>
+                </main>
+                <footer>
+                  <button onclick="composeMessage()">
+                    <img src="assets/compose.png" alt="Compose">
+                  </button>  
+                </footer>
             </div>
         </div>
+
+        <audio id="buttonClickSound" src="assets/click.wav" preload="auto"></audio>
+        <audio id="switchSound" src="assets/switch.wav" preload="auto"></audio>
+        <audio id="typingSound" src="assets/typing.wav" preload="auto"></audio>
+        <audio id="navClickSound" src="assets/click.wav" preload="auto"></audio>
+        <audio id="sendSound" src="assets/send.wav" preload="auto"></audio>
+
+        <script>
+            const loginForm = document.getElemetnById('loginForm');
+            const signupForm =  document.getElementById('signupForm');
+            const showSignupLink = document.getElementById('showSignup');
+            const showLoginLink = document.getElementById('showLogin');
+            const mainContent = document.getElementById('mainContent');
+            const appContainer = document.querySelector('app-container');
+            const buttonClickSound = document.getElementById('buttonClickSound');
+            const switchSound = document.getElementById('switchSound');
+            const typingSound = document.getElementById('typingSound');
+            const navClickSound = document.getElementById('navClickSound');
+
+            function playSound(audioElement) {
+                if(audioElement) {
+                    audioElement.currentTime = 0;
+                    audioElement.play();
+                }
+            }
+
+            showSignupLink.addEvenetListener('click', (e) => {
+                e.preventDefault();
+                playSound(switchSound);
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+            });
+
+            showLoginLink.addEventListener('click', (e)  => {
+                e.preventDefault();
+                playSound(switchSound);
+                signupForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+            });
+
+            document.addEvenetlistner('DOMContentLoaded', () => {
+                const startPage = document.getElementById("startPage");
+
+                setTimeout(() => {
+                    if(startPage && mainContent) {
+                        startPage.style.display = 'none';
+                        mainContent.classList.remove("hidden");
+                        loginForm.classList.remove('hidden');
+                        signupForm.classList.add('hidden');
+                        attachWindowControlListeners();
+                    }
+                }, 5000);
+            });
+
+            document.getElementById('login-form').addEventListener('submit' , (e) => {
+                e.preventDefault();
+                playSound(buttonClickSound);
+                loginForm.classList.add('hidden');
+                appContainer.style.display = 'flex' ;                 
+            
+            });
+
+            document.getElementById('signup-form').addEventListener('submit',(e) => {
+                e.preventDefault();
+                playSound(buttonClickSound);
+                signupForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+            });
+
+            const inputFeilds = document.querySelectorAll('input[type="text"], input[type="password"], textarea');
+            inputFeilds.forEach(input => {
+                input.addEventListener('keydown',() => {
+                    playSound(typingSound);
+                });
+            });
+
+            function switchTab(tab) {
+                playSound(navClickSound);
+                const area = document.getElementById('mail-area');
+                area.innerHTML = 
+                <h2>${tab.toUpperCase()}</h2>
+                <p> no messages yet.</p>
+                ;
+            }
+
+            function composeMessage() {
+                playSound(navClickSound);
+                const area = document.getElementById('mail-area');
+            }
+        </script>
     </body>
 </html>
