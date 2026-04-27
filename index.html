@@ -29,7 +29,7 @@
             background-repeat: no-repeat;
             background-size: cover;
             background-position: center;
-            color: navy;            ;
+            color: navy;
             animation: fadeIn 3s ease-out;
             text-align: center;
             margin-top: 80px;
@@ -43,7 +43,7 @@
 
         .slogan {
             font-size: 2rem;
-            color: rgb(204,204,205 )
+            color: rgb(45, 45, 99);
             margin-bottom: 40px;
             opacity: 0;
             animation: sloganAnimation 2s ease-out 1s forwards;
@@ -91,6 +91,13 @@
             font-size: 20px;
             color: navy;
             flex-grow: 1;
+        }
+
+        .user-status {
+            margin-right: 10px;
+            font-size: 14px;
+            color: #4b0082;
+            align-self: center;
         }
 
         .window-controls {
@@ -293,7 +300,51 @@
             filter: drop-shadow(1px 1px #ffcce0);
             transition: transform 0.2s ease;
         }
-        
+
+        .message-card {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid #ffbde1;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 16px;
+            margin-bottom: 14px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: left;
+        }
+
+        .message-date {
+            color: #8a5a8d;
+            font-size: 0.9rem;
+            margin: 8px 0;
+        }
+
+        .message-body {
+            color: #4b0082;
+            margin-bottom: 12px;
+            white-space: pre-wrap;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .message-actions button {
+            background: #ffe3e3;
+            border: 1px solid #ffbde1;
+            border-radius: 10px;
+            color: navy;
+            padding: 6px 10px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .message-actions button:hover {
+            background: #ffd6e4;
+        }
+
         footer button{
             background: transparent;
             border-color: transparent;
@@ -326,6 +377,7 @@
         <div id="mainContent" class="hidden">
             <div class="title-bar">
                 <div class="drag-region">Ciel</div>
+                <div id="userStatus" class="user-status"></div>
                 <div class="window-controls">
                     <button class="min-btn" title="Minimize">
                         <img src="assets/icon-min.png" alt="Minimize">
@@ -373,8 +425,11 @@
                     <button onclick="switchTab('sent')">
                         <img src="assets/sent.png" alt="Sent" width="85" height="85">
                     </button>
+                    <button onclick="switchTab('drafts')">
+                        <img src="assets/compose.png" alt="Drafts" width="85" height="85">
+                    </button>
                     <button onclick="switchTab('Trash')">
-                        <img src="assets/trash.png" alt="inbox" width="85" height="85">
+                        <img src="assets/trash.png" alt="Trash" width="85" height="85">
                     </button>
                 </nav>
                 <main id="mail-area">
@@ -405,12 +460,244 @@
         const switchSound = document.getElementById('switchSound');
         const typingSound = document.getElementById('typingSound');
         const navClickSound = document.getElementById('navClickSound');
+        const userStatus = document.getElementById('userStatus');
+        let currentTab = 'inbox';
 
         function playSound(audioElement) {
             if (audioElement) {
                 audioElement.currentTime = 0;
                 audioElement.play();
             }
+        }
+
+        function loadUsers() {
+            try {
+                return JSON.parse(localStorage.getItem('cielUsers') || '{}');
+            } catch {
+                return {};
+            }
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('cielUsers', JSON.stringify(users));
+        }
+
+        function loadMessages() {
+            try {
+                return JSON.parse(localStorage.getItem('cielMessages') || '[]');
+            } catch {
+                return [];
+            }
+        }
+
+        function saveMessages(messages) {
+            localStorage.setItem('cielMessages', JSON.stringify(messages));
+        }
+
+        function getCurrentUser() {
+            return localStorage.getItem('cielCurrentUser') || '';
+        }
+
+        function setCurrentUser(username) {
+            localStorage.setItem('cielCurrentUser', username);
+        }
+
+        function showCurrentUser() {
+            const currentUser = getCurrentUser();
+            if (userStatus) {
+                userStatus.textContent = currentUser ? `User: ${currentUser}` : '';
+            }
+        }
+
+        function moveToTrash(messageId) {
+            const messages = loadMessages();
+            const message = messages.find((item) => item.id === messageId);
+            if (!message) return;
+            message.trashed = true;
+            saveMessages(messages);
+            renderMailArea(currentTab);
+        }
+
+        function deleteMessage(messageId) {
+            const messages = loadMessages().filter((item) => item.id !== messageId);
+            saveMessages(messages);
+            renderMailArea(currentTab);
+        }
+
+        function openDraft(messageId) {
+            const messages = loadMessages();
+            const draft = messages.find((item) => item.id === messageId && item.draft && !item.trashed);
+            if (!draft) return;
+            composeMessage(draft.to, draft.body, messageId);
+        }
+
+        function saveDraft(recipient, body, draftId = null) {
+            const currentUser = getCurrentUser();
+            if (!currentUser) {
+                alert('Please log in before saving drafts.');
+                return;
+            }
+
+            const messages = loadMessages();
+            const normalizedRecipient = recipient.trim().toLowerCase();
+            const draftMessage = {
+                id: draftId || Date.now(),
+                from: currentUser,
+                to: normalizedRecipient,
+                body: body.trim(),
+                date: new Date().toLocaleString(),
+                draft: true,
+                trashed: false,
+            };
+
+            if (draftId) {
+                const index = messages.findIndex((item) => item.id === draftId);
+                if (index !== -1) {
+                    messages[index] = draftMessage;
+                } else {
+                    messages.push(draftMessage);
+                }
+            } else {
+                messages.push(draftMessage);
+            }
+
+            saveMessages(messages);
+            if (currentTab === 'drafts') {
+                renderMailArea('drafts');
+            }
+            document.getElementById('mail-area').innerHTML = `
+                <h2>Draft saved</h2>
+                <p>Your draft has been saved.</p>
+            `;
+        }
+
+        function renderMailArea(tab) {
+            const currentUser = getCurrentUser();
+            const area = document.getElementById('mail-area');
+            if (!area) return;
+
+            if (!currentUser) {
+                area.innerHTML = `
+                    <h2>${tab.toUpperCase()}</h2>
+                    <p>Please log in to view messages.</p>
+                `;
+                return;
+            }
+
+            const messages = loadMessages();
+            let filtered = [];
+            let title = tab.toUpperCase();
+
+            if (tab === 'inbox') {
+                filtered = messages.filter((message) => !message.draft && !message.trashed && message.to === currentUser);
+            } else if (tab === 'sent') {
+                filtered = messages.filter((message) => !message.draft && !message.trashed && message.from === currentUser);
+            } else if (tab === 'drafts') {
+                filtered = messages.filter((message) => message.draft && !message.trashed && message.from === currentUser);
+            } else if (tab === 'trash') {
+                filtered = messages.filter((message) => message.trashed && (message.from === currentUser || message.to === currentUser));
+            } else {
+                area.innerHTML = `
+                    <h2>${title}</h2>
+                    <p>No messages yet.</p>
+                `;
+                return;
+            }
+
+            if (filtered.length === 0) {
+                area.innerHTML = `
+                    <h2>${title}</h2>
+                    <p>No messages yet.</p>
+                `;
+                return;
+            }
+
+            const items = filtered
+                .sort((a, b) => b.id - a.id)
+                .map((message) => {
+                    const direction = tab === 'inbox'
+                        ? `From: ${message.from}`
+                        : tab === 'sent'
+                        ? `To: ${message.to}`
+                        : tab === 'drafts'
+                        ? `Draft to: ${message.to || 'unspecified'}`
+                        : `From: ${message.from}`;
+
+                    const actions = [];
+                    if (tab === 'drafts') {
+                        actions.push(`<button onclick="openDraft(${message.id})">Edit</button>`);
+                        actions.push(`<button onclick="moveToTrash(${message.id})">Trash</button>`);
+                    } else if (tab === 'trash') {
+                        actions.push(`<button onclick="deleteMessage(${message.id})">Delete</button>`);
+                    } else {
+                        actions.push(`<button onclick="moveToTrash(${message.id})">Trash</button>`);
+                    }
+
+                    return `
+                        <div class="message-card">
+                            <div><strong>${direction}</strong></div>
+                            <div class="message-date">${message.date}</div>
+                            <div class="message-body">${message.body}</div>
+                            <div class="message-actions">${actions.join('')}</div>
+                        </div>
+                    `;
+                })
+                .join('');
+
+            area.innerHTML = `
+                <h2>${title}</h2>
+                <div class="message-list">${items}</div>
+            `;
+        }
+
+        function sendMessage(recipient, body, draftId = null) {
+            const currentUser = getCurrentUser();
+            const users = loadUsers();
+            const normalizedRecipient = recipient.trim().toLowerCase();
+
+            if (!currentUser) {
+                alert('Please log in before sending messages.');
+                return;
+            }
+
+            if (!normalizedRecipient || !body.trim()) {
+                alert('Enter both a recipient username and a message.');
+                return;
+            }
+
+            if (!users[normalizedRecipient]) {
+                alert(`User '${normalizedRecipient}' does not exist.`);
+                return;
+            }
+
+            const messages = loadMessages();
+            if (draftId) {
+                const draftIndex = messages.findIndex((item) => item.id === draftId);
+                if (draftIndex !== -1) {
+                    messages.splice(draftIndex, 1);
+                }
+            }
+
+            messages.push({
+                id: Date.now(),
+                from: currentUser,
+                to: normalizedRecipient,
+                body: body.trim(),
+                date: new Date().toLocaleString(),
+                draft: false,
+                trashed: false,
+            });
+            saveMessages(messages);
+
+            if (currentTab === 'sent') {
+                renderMailArea('sent');
+            }
+
+            document.getElementById('mail-area').innerHTML = `
+                <h2>Message sent</h2>
+                <p><strong>To:</strong> ${normalizedRecipient}</p>
+                <p>${body.trim()}</p>
+            `;
         }
 
         showSignupLink.addEventListener('click', (e) => {
@@ -428,12 +715,18 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            const startPage = document.getElementById("startPage");
+            const startPage = document.getElementById('startPage');
+            const currentUser = getCurrentUser();
+            const loginUsername = document.querySelector('#login-form input[name="email"]');
+
+            if (loginUsername && currentUser) {
+                loginUsername.value = currentUser;
+            }
 
             setTimeout(() => {
                 if (startPage && mainContent) {
                     startPage.style.display = 'none';
-                    mainContent.classList.remove("hidden");
+                    mainContent.classList.remove('hidden');
                     loginForm.classList.remove('hidden');
                     signupForm.classList.add('hidden');
                     attachWindowControlListeners();
@@ -443,48 +736,93 @@
 
         document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
+            const usernameInput = document.querySelector('#login-form input[name="email"]');
+            const passwordInput = document.querySelector('#login-form input[name="password"]');
+            const users = loadUsers();
+            const username = usernameInput.value.trim().toLowerCase();
+            const password = passwordInput.value;
+
+            if (!username || !password) {
+                alert('Enter username and password to log in.');
+                return;
+            }
+
+            if (!users[username] || users[username].password !== password) {
+                alert('Invalid username or password.');
+                return;
+            }
+
+            setCurrentUser(username);
+            showCurrentUser();
             playSound(buttonClickSound);
-            loginForm.classList.add('hidden'); 
+            loginForm.classList.add('hidden');
             appContainer.style.display = 'flex';
+            currentTab = 'inbox';
+            renderMailArea('inbox');
         });
 
         document.getElementById('signup-form').addEventListener('submit', (e) => {
             e.preventDefault();
+            const usernameInput = document.querySelector('#signup-form input[name="name"]');
+            const passwordInput = document.querySelector('#signup-form input[name="password"]');
+            const users = loadUsers();
+            const username = usernameInput.value.trim().toLowerCase();
+            const password = passwordInput.value;
+
+            if (!username || !password) {
+                alert('Enter a username and password to sign up.');
+                return;
+            }
+
+            if (users[username]) {
+                alert('That username is already taken.');
+                return;
+            }
+
+            users[username] = { password };
+            saveUsers(users);
             playSound(buttonClickSound);
+            alert(`Account '${username}' created. You can now log in.`);
             signupForm.classList.add('hidden');
             loginForm.classList.remove('hidden');
         });
 
         const inputFields = document.querySelectorAll('input[type="text"], input[type="password"], textarea');
-        inputFields.forEach(input => {
+        inputFields.forEach((input) => {
             input.addEventListener('keydown', () => {
                 playSound(typingSound);
             });
         });
 
         function switchTab(tab) {
+            const normalizedTab = tab.toLowerCase();
+            currentTab = normalizedTab;
             playSound(navClickSound);
-            const area = document.getElementById('mail-area');
-            area.innerHTML = `
-                <h2>${tab.toUpperCase()}</h2>
-                <p>no messages yet.</p>
-            `;
+            renderMailArea(normalizedTab);
         }
 
-        function composeMessage() {
+        function composeMessage(prefillRecipient = '', prefillBody = '', draftId = null) {
+            if (!getCurrentUser()) {
+                alert('Please log in to compose a message.');
+                return;
+            }
+
             playSound(navClickSound);
             const area = document.getElementById('mail-area');
             area.innerHTML = `
                 <h2>new message</h2>
-                <input type='text' id='toInput' placeholder='to...' style='width: 100%;'><br><br>
-                <textarea id='messageInput' placeholder='write your message...' style='width: 100%; height: 100px;'></textarea><br><br>
+                <input type='text' id='toInput' placeholder='to (username)...' value='${prefillRecipient}' style='width: 100%;'><br><br>
+                <textarea id='messageInput' placeholder='write your message...' style='width: 100%; height: 100px;'>${prefillBody}</textarea><br><br>
                 <button id='sendButton' class='send-btn'>
-                    <img src='sending.png' alt='Send' class='send-icon'>
+                    <img src='assets/sending.png' alt='Send' class='send-icon'>
                 </button>
+                <button id='saveDraftButton' class='send-btn' style='margin-top: 10px; padding: 10px 14px; background: #ffe3e3; border-radius: 10px; color: navy;'>Save draft</button>
             `;
 
             const toInput = document.getElementById('toInput');
             const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            const saveDraftButton = document.getElementById('saveDraftButton');
             const sendSound = document.getElementById('sendSound');
 
             if (toInput) {
@@ -495,9 +833,17 @@
             }
 
             if (sendButton) {
-                sendButton.addEventListener('click', () => {
-                playSound(sendSound);
-                alert("message sent!");
+                sendButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    playSound(sendSound);
+                    sendMessage(toInput.value, messageInput.value, draftId);
+                });
+            }
+
+            if (saveDraftButton) {
+                saveDraftButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    saveDraft(toInput.value, messageInput.value, draftId);
                 });
             }
         }
