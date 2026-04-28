@@ -18,7 +18,8 @@
             background-position: center;
             background-attachment: fixed;
             color: #4b0082;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         #startPage {
@@ -39,6 +40,12 @@
             width: 300px;
             height: 300px;
             animation: logoAnimation 2s ease-out forwards;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
         }
 
         .slogan {
@@ -194,7 +201,8 @@
 
         .app-container {
             display: none;
-            padding-bottom: 100px;
+            padding-top: 90px;
+            padding-bottom: 80px;
             margin-left: 25px;
             margin-right: 25px;
             min-height: 100vh;
@@ -206,11 +214,13 @@
 
         nav {
             display: flex;
-            flex-grow: 1;
+            flex-wrap: wrap;
+            justify-content: center;
             align-items: center;
-            margin-top: -83px;
-            margin-left: 5px;
-            margin-right: 20px;
+            gap: 10px;
+            margin: 0 20px 20px 5px;
+            position: relative;
+            z-index: 2;
         }
 
         nav button:nth-child(2) {
@@ -219,9 +229,7 @@
         }
 
         nav button {
-            margin-top: -83px;
-            margin-right: 10px;
-            margin-left: 32px;
+            margin: 0;
             flex-grow: 1;
             background: transparent;
             padding: 2px;
@@ -232,22 +240,22 @@
 
         #mail-area {
             width: 300px;
-            height: 350px;
+            min-height: 300px;
+            max-height: 400px;
             background: #fff8fc;
-            opacity: 0.8;
+            opacity: 0.95;
             border: 5px dashed #ffbde1;
             border-radius: 12px;
             padding: 16px;
             box-sizing: border-box;
-            margin: 20px;
-            margin-top: -50px;
-            margin-bottom: -60px; 
+            margin: 10px 0 20px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
             transition: all 0.3s ease;
+            overflow-y: auto;
         }
 
         #mail-area input[type='text'] {
@@ -355,22 +363,21 @@
             align-items: center;
             justify-content: center;
             flex-grow: 1;
-            padding-bottom: 30px;
+            padding: 10px;
             cursor: pointer;
         }
 
         footer img {
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             flex-grow: 1;
-            padding-right: 15px;
-            padding-left: 15px;
+            padding: 10px;
         }
         </style>
     </head>
     <body background="assets/header.png">
         <div id="startPage">
-            <img src="assets/logo.png" alt="CIEL Logo" class="logo"/>
+            <img src="assets/logo.png" alt="CIEL Logo" class="logo" onclick="returnToStartPage()"/>
             <div class="slogan">Tiny app , big messages</div>
         </div>
 
@@ -420,16 +427,16 @@
             <div class="app-container">
                 <nav>
                     <button onclick="switchTab('inbox')">
-                        <img src="assets/inbox.png" alt="inbox" width="85" height="85">
+                        <img src="assets/inbox.png" alt="inbox" width="100" height="100">
                     </button>
                     <button onclick="switchTab('sent')">
-                        <img src="assets/sent.png" alt="Sent" width="85" height="85">
+                        <img src="assets/sent.png" alt="Sent" width="100" height="100">
                     </button>
                     <button onclick="switchTab('drafts')">
-                        <img src="assets/compose.png" alt="Drafts" width="85" height="85">
+                        <img src="assets/compose.png" alt="Drafts" width="100" height="100">
                     </button>
                     <button onclick="switchTab('Trash')">
-                        <img src="assets/trash.png" alt="Trash" width="85" height="85">
+                        <img src="assets/trash.png" alt="Trash" width="100" height="100">
                     </button>
                 </nav>
                 <main id="mail-area">
@@ -437,7 +444,7 @@
                 </main>
                 <footer>
                   <button onclick="composeMessage()">
-                    <img src="assets/compose.png" alt="Compose">
+                    <img src="assets/compose.png" alt="Compose" width="180" height="180">
                   </button>  
                 </footer>
             </div>
@@ -755,7 +762,8 @@
             setCurrentUser(username);
             showCurrentUser();
             playSound(buttonClickSound);
-            loginForm.classList.add('hidden');
+            
+            document.querySelector('.form-container').style.display = 'none';
             appContainer.style.display = 'flex';
             currentTab = 'inbox';
             renderMailArea('inbox');
@@ -852,20 +860,71 @@
             const minBtn = document.querySelector('.min-btn');
             const closeBtn = document.querySelector('.close-btn');
 
-            if (minBtn && window.electronAPI) {
+            if (minBtn) {
                 minBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     console.log('Minimize clicked');
-                    window.electronAPI.minimizeWindow();
+                    
+                    
+                    const mainContent = document.getElementById('mainContent');
+                    if (mainContent) {
+                        mainContent.classList.add('hidden');
+                       
+                        const startPage = document.getElementById('startPage');
+                        if (startPage) {
+                            startPage.style.display = 'flex';
+                        }
+                    }
                 });
             }
 
-            if (closeBtn && window.electronAPI) {
+            if (closeBtn) {
                 closeBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     console.log('Close clicked');
-                    window.electronAPI.closeWindow();
+                    
+                    if (confirm('Are you sure you want to close the application?')) {
+                        
+                        const mainContent = document.getElementById('mainContent');
+                        const startPage = document.getElementById('startPage');
+                        
+                        if (mainContent) {
+                            mainContent.classList.add('hidden');
+                        }
+                        if (startPage) {
+                            startPage.style.display = 'none';
+                        }
+                        
+                        
+                        const body = document.body;
+                        body.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; color: navy; font-family: Pixelify Sans, system-ui; background: #ffe3e3;"><h1>Goodbye!</h1><p>You can now close this window.</p></div>';
+                        
+                        
+                        setTimeout(() => {
+                            window.close();
+                        }, 2000);
+                    }
                 });
+            }
+        }
+
+        function returnToStartPage() {
+            const mainContent = document.getElementById('mainContent');
+            const startPage = document.getElementById('startPage');
+
+            if (mainContent && startPage) {
+                mainContent.classList.add('hidden');
+                startPage.style.display = 'flex';
+                
+                setTimeout(() => {
+                    if (startPage && mainContent) {
+                        startPage.style.display = 'none';
+                        mainContent.classList.remove('hidden');
+                        loginForm.classList.remove('hidden');
+                        signupForm.classList.add('hidden');
+                        attachWindowControlListeners();
+                    }
+                }, 5000);
             }
         }
     </script>
